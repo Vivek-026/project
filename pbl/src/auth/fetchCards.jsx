@@ -11,5 +11,6 @@ export const getCards = async () => {
     } catch (error) {
       console.error("Cannot fetch cards:", error);
       throw error; 
+      console.log("hi")
     }
   };
