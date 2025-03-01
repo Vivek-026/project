@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
   const cards = useSelector((state) => state.cards.cards);
   const user = localStorage.getItem("user") || "IEEE";
+  //const user=useSelector((state)=>state.auth.userData);
   const filteredCards = cards.filter((card) => card.club === user.name);
 
   return (

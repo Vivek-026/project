@@ -4,6 +4,8 @@ import { registerUser } from "../../auth/registeruser";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../store/authSlice";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -15,6 +17,17 @@ const Signup = () => {
   const [success, setSuccess] = useState(false);
   const dispatch =useDispatch();
   const navigate=useNavigate();
+
+
+  const state=useSelector((state)=>state.auth.status);
+
+
+  useEffect(()=>{
+    if(state){
+      navigate('/');
+    }
+
+  },[])
 
 
   const handleSubmit = async (e) => {
@@ -36,9 +49,11 @@ const Signup = () => {
     try {
       const user = await registerUser(name, email, password, role);
       if(user){
-        dispatch(login({userData: user}));
+        dispatch(login({userData: user.user}));
+        
 
-        localStorage.setItem("token", user.token);
+       
+        localStorage.setItem("token", user.user._id);
         console.log(name, email, password, role);
         navigate('/');
       }

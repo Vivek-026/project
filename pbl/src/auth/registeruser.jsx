@@ -1,6 +1,6 @@
 export const registerUser = async (name,email, password, role) => {
     try {
-      const response = await fetch("https://your-backend.com/api/register", {
+      const response = await fetch("http://localhost:5000/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

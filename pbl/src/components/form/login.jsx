@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { loginUser as apiLoginUser } from "../../auth/loginuser"; 
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { login } from "../../store/authSlice";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,20 +11,31 @@ const Login = () => {
   const [role, setRole] = useState("student");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const state=useSelector((state)=>state.auth.status);
+
+
+  useEffect(()=>{
+    if(state){
+      navigate('/');
+    }
+
+  },[])
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      //const user = await apiLoginUser(email, password, role);
-      const user={};
+      const user = await apiLoginUser(email, password, role);
+      
 
       if (user) {
-        dispatch(login({ userData: user }));
+        dispatch(login({ userData: user.user }));
 
         navigate('/');
+        localStorage.setItem("token", user.user._id);
 
-        //localStorage.setItem("token", user.token);
       } else {
         console.log("No user found");
       }

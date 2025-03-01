@@ -14,6 +14,8 @@ function LogoutButton(){
 
             dispatch(logout())
             localStorage.removeItem("token");
+            localStorage.removeItem("name");
+            localStorage.removeItem("email");
             navigate('/login')
             
         } catch (error) {
