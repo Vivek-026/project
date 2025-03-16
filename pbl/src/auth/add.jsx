@@ -1,7 +1,7 @@
 
 export const Add = async (name ,title, content, image, likes = 0) => {
     try {
-        const apiUrl = "http://localhost:3000/posts";
+        const apiUrl = "http://localhost:5000/posts";
 
         const response = await fetch(apiUrl, {
             method: "POST",

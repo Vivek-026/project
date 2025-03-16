@@ -35,6 +35,7 @@ const Login = () => {
 
         navigate('/');
         localStorage.setItem("token", user.user._id);
+        localStorage.setItem("name",email);
 
       } else {
         console.log("No user found");

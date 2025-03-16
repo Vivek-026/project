@@ -8,8 +8,8 @@ function NewPost() {
     const [image, setImage] = useState("");
     const [likes, setLikes] = useState(0);
     const user=localStorage.getItem("user")
-    const name=user.name;
-
+    //const name=user.name;
+    const name="vivek";
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {

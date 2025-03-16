@@ -43,7 +43,11 @@ const router=createBrowserRouter([
       },{
         path:"adminprofile",
         element:<AdminProfile/>
+      },{
+        path:"newPost",
+        element:<NewPost/>
       }
+
     ]
   }
 ])

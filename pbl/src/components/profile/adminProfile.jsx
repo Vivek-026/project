@@ -2,46 +2,80 @@ import React from "react";
 import LogoutButton from "../button/logoutButton";
 import AdminCard from "../../adminCard";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
   const cards = useSelector((state) => state.cards.cards);
   const user = localStorage.getItem("user") || "IEEE";
   //const user=useSelector((state)=>state.auth.userData);
+
   const filteredCards = cards.filter((card) => card.club === user.name);
 
   return (
-    <div className="flex flex-col w-full bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">PROFILE</h2>
-          <LogoutButton />
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="w-32 h-32 rounded-full bg-gray-200 border-4 border-indigo-600 flex-shrink-0"></div>
-          <div className="flex-1 flex flex-col items-center text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{user.name}</h1>
-            <p className="text-gray-600 text-sm">{clubBio}</p>
-            <p className="text-gray-500 text-sm mt-2">{followers} Followers</p>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">Profile Dashboard</h2>
+            <LogoutButton />
           </div>
         </div>
-      </div>
-      <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">POSTS</h2>
-        <div className="grid grid-cols-3 gap-4">
-          {filteredCards.length === 0 ? (
-            <p className="text-gray-500">No posts available for {user.name}.</p>
-          ) : (
-            filteredCards.map((card, index) => (
-              <AdminCard
-                key={index}
-                club={card.club || "Unknown Club"}
-                title={card.title || "Untitled"}
-                content={card.content || "No content available."}
-                image={card.image || "https://via.placeholder.com/150"}
-                likes={card.likes || 0}
-              />
-            ))
-          )}
+
+        {/* Profile Section */}
+        <div className="px-8 py-6">
+          <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
+            <div className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-4 border-white shadow-lg flex items-center justify-center">
+              <span className="text-4xl text-blue-600">{user.name?.charAt(0)}</span>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{user.name}</h1>
+              <p className="text-gray-600 mb-4 max-w-2xl">{clubBio}</p>
+              <div className="flex items-center justify-center md:justify-start gap-6">
+                <div className="text-center">
+                  <span className="block text-2xl font-bold text-blue-600">{followers}</span>
+                  <span className="text-sm text-gray-500">Followers</span>
+                </div>
+                <Link to="/newPost">
+                  <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                    Create New Post
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Posts Section */}
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">
+              Recent Posts
+            </h2>
+            {filteredCards.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 text-lg">
+                  No posts available for {user.name}.
+                </p>
+                <Link to="/newPost">
+                  <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+                    Create Your First Post
+                  </button>
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredCards.map((card, index) => (
+                  <AdminCard
+                    key={index}
+                    club={card.club || "Unknown Club"}
+                    title={card.title || "Untitled"}
+                    content={card.content || "No content available."}
+                    image={card.image || "https://via.placeholder.com/150"}
+                    likes={card.likes || 0}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
