@@ -1,15 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LogoutButton from "../button/logoutButton";
 import AdminCard from "../../adminCard";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { setCards } from "../../store/cardSlice";
+import { getCards } from "../../auth/fetchCards";
 
 function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
+  const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
-  const user = localStorage.getItem("user") || "IEEE";
-  //const user=useSelector((state)=>state.auth.userData);
+  const user = localStorage.getItem("user");
+  const name = localStorage.getItem("name");
+  const email = localStorage.getItem("email");
 
-  const filteredCards = cards.filter((card) => card.club === user.name);
+  useEffect(() => {
+    const fetchCards = async () => {
+      const data = await getCards(); 
+      dispatch(setCards(data)); 
+    };
+
+    // Only fetch if cards array is empty
+    if (!cards.length) {
+      fetchCards();
+    }
+  }, [dispatch, cards.length]);
+
+  const filteredCards = cards.filter((card) => card.name === name);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -26,10 +42,10 @@ function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
         <div className="px-8 py-6">
           <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
             <div className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-4 border-white shadow-lg flex items-center justify-center">
-              <span className="text-4xl text-blue-600">{user.name?.charAt(0)}</span>
+              <span className="text-4xl text-blue-600">{name}</span>
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">{user.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{name}</h1>
               <p className="text-gray-600 mb-4 max-w-2xl">{clubBio}</p>
               <div className="flex items-center justify-center md:justify-start gap-6">
                 <div className="text-center">
@@ -53,7 +69,7 @@ function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
             {filteredCards.length === 0 ? (
               <div className="text-center py-12 bg-gray-50 rounded-lg">
                 <p className="text-gray-500 text-lg">
-                  No posts available for {user.name}.
+                  No posts available for {name}.
                 </p>
                 <Link to="/newPost">
                   <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
@@ -63,10 +79,10 @@ function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCards.map((card, index) => (
+                {filteredCards.slice().reverse().map((card, index) => (
                   <AdminCard
                     key={index}
-                    club={card.club || "Unknown Club"}
+                    club={card.name || "Unknown Club"}
                     title={card.title || "Untitled"}
                     content={card.content || "No content available."}
                     image={card.image || "https://via.placeholder.com/150"}

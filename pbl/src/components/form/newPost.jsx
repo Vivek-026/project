@@ -9,7 +9,7 @@ function NewPost() {
     const [likes, setLikes] = useState(0);
     const user=localStorage.getItem("user")
     //const name=user.name;
-    const name="vivek";
+    const name=localStorage.getItem("name");
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -27,7 +27,7 @@ function NewPost() {
 
         try {
 
-            const response=await Add(title,content,image,likes);
+            const response=await Add(name,title,content,image,likes);
             console.log("Post Data:", { name, title, content, image, likes });
 
             setTitle("");
