@@ -25,22 +25,29 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const user = await apiLoginUser(email, password, role);
       
-
       if (user) {
+        // Dispatch to Redux store
         dispatch(login({ userData: user.user }));
-
-        navigate('/');
+  
+        // Store authentication data in localStorage
         localStorage.setItem("token", user.user._id);
-        localStorage.setItem("name",email);
-
+        localStorage.setItem("name",user.user.name);
+        localStorage.setItem("email",email);
+        localStorage.setItem("role", user.user.role); // Store the role
+        localStorage.setItem("authStatus", "true"); // Store login status
+        
+        // If you want to store the complete user data
+        localStorage.setItem("userData", JSON.stringify(user.user));
+  
+        navigate('/');
       } else {
         console.log("No user found");
       }
-
+  
     } catch (error) {
       console.error("Error in logging in:", error);
     }

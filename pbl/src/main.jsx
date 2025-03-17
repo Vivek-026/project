@@ -19,6 +19,7 @@ import { Provider } from 'react-redux'
 import Store from './store/store.jsx'
 import { useSelector } from 'react-redux'
 import AdminProfile from './components/profile/adminProfile.jsx'
+import StuProfile from './components/profile/stuProfile.jsx'
 
 //const status=useSelector((state)=>state.auth.status);
 
@@ -46,6 +47,9 @@ const router=createBrowserRouter([
       },{
         path:"newPost",
         element:<NewPost/>
+      },{
+        path:'/stuprofile',
+        element: <StuProfile/>
       }
 
     ]
