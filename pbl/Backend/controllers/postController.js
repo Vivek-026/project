@@ -1,10 +1,19 @@
 const Post = require('../models/Post');
+const cloudinary = require("../config/cloudinary");
 
 // Create Post (Protected)
 exports.createPost = async (req, res) => {
     try {
-        const { name, title, content, image } = req.body;
-        const post = new Post({ name, title, content, image });
+        const { name, title, content} = req.body;
+
+        const result = await cloudinary.uploader.upload(req.files.image.tempFilePath);
+
+        const post = new Post({ 
+            name, 
+            title, 
+            content,
+            image: result.secure_url
+         });
         await post.save();
         res.json({ message: 'Post added successfully', post });
     } catch (err) { 
