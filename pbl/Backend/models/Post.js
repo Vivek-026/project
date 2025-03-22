@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');  // ✅ Import mongoose
 
 const PostSchema = new mongoose.Schema({
-    name: String,
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     title: String,
     content: String,
     image: { type: String, required: true },
