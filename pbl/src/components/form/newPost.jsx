@@ -6,7 +6,7 @@ function NewPost() {
     const [content, setContent] = useState("");
     const [image, setImage] = useState(null); // Store file object
     const [likes, setLikes] = useState(0);
-    const name = localStorage.getItem("name");
+    const club = localStorage.getItem("club");
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -25,7 +25,7 @@ function NewPost() {
         }
 
         const formData = new FormData();
-        formData.append("name", name);
+        formData.append("name", club);
         formData.append("title", title);
         formData.append("content", content);
         formData.append("image", image); // Append file

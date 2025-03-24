@@ -6,12 +6,14 @@ import { Link } from "react-router-dom";
 import { setCards } from "../../store/cardSlice";
 import { getCards } from "../../auth/fetchCards";
 
-function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
+function AdminProfile({ followers = 245 }) {
   const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
   const user = localStorage.getItem("user");
-  const name = localStorage.getItem("name");
+  const name = localStorage.getItem("club");
+  const admin= localStorage.getItem("name");
   const email = localStorage.getItem("email");
+  const clubBio = localStorage.getItem("description");
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -46,7 +48,8 @@ function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
             </div>
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{name}</h1>
-              <p className="text-gray-600 mb-4 max-w-2xl">{clubBio}</p>
+              <p className="text-gray-600 mb-2 max-w-2xl">{clubBio}</p>
+              <p className="text-gray-600 mb-4 max-w-2xl">ADMIN: {admin}</p>
               <div className="flex items-center justify-center md:justify-start gap-6">
                 <div className="text-center">
                   <span className="block text-2xl font-bold text-blue-600">{followers}</span>

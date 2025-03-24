@@ -35,40 +35,37 @@ function Navbar() {
   const userRole = user ? user.role : localStorage.getItem("role");
 
   return (
-    <div className="flex justify-between shadow-lg w-full">
-      <div>
-        <Link to={'/'} className="text-2xl font-bold p-2 m-2">ClubConnect</Link>
-      </div>
+    <div className="flex flex-col w-64 bg-white shadow-lg p-4">
+      {/* Logo */}
+      <Link to={'/'} className="text-2xl font-bold mb-6">ClubConnect</Link>
 
-      <div>
-        <ul className="flex gap-6 mr-4 cursor-pointer text-lg">
-          <li className="p-2 hover:text-purple-600">
-            <Link to={'/about'}>About</Link>
-          </li>
-          <li className="p-2 hover:text-purple-600">
-            <Link to={'/about'}>About</Link>
-          </li>
-          <li className="p-2 hover:text-purple-600">
-            <Link to={'/about'}>About</Link>
-          </li>
+      {/* Navigation Links */}
+      <ul className="flex flex-col gap-4">
+        <li className="hover:text-purple-600">
+          <Link to={'/clubs'}>Clubs</Link>
+        </li>
+        <li className="hover:text-purple-600">
+          <Link to={'/about'}>About</Link>
+        </li>
+        <li className="hover:text-purple-600">
+          <Link to={'/about'}>About</Link>
+        </li>
 
-          {/* Check both Redux state and localStorage */}
-          {!logged && localStorage.getItem("authStatus") !== "true" ? (
-            <li className="p-2 hover:text-purple-600">
-              <LoginButton />
-            </li>
-          ) : (
-            <li className="p-2 hover:text-purple-600">
-              {/* Use userRole or check localStorage directly */}
-              {userRole === "student" ? (
-                <Link to={'/stuprofile'}>Profile</Link>
-              ) : userRole === "club-admin" ? (
-                <Link to={'/adminprofile'}>Profile</Link>
-              ) : null}
-            </li>
-          )}
-        </ul>
-      </div>
+        {/* Conditional Rendering for Login/Profile */}
+        {!logged && localStorage.getItem("authStatus") !== "true" ? (
+          <li className="hover:text-purple-600">
+            <LoginButton />
+          </li>
+        ) : (
+          <li className="hover:text-purple-600">
+            {userRole === "student" ? (
+              <Link to={'/stuprofile'}>Profile</Link>
+            ) : userRole === "club-admin" ? (
+              <Link to={'/adminprofile'}>Profile</Link>
+            ) : null}
+          </li>
+        )}
+      </ul>
     </div>
   );
 }
