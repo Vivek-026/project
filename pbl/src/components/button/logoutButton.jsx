@@ -18,6 +18,9 @@ function LogoutButton(){
             localStorage.removeItem("role");
             localStorage.removeItem("authStatus");
             localStorage.removeItem("userData");
+            localStorage.removeItem("club");
+            localStorage.removeItem("description"); // ✅ Clear club details
+
             navigate('/login')
             
         } catch (error) {

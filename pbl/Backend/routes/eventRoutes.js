@@ -20,7 +20,7 @@ router.get('/:id', getEventById); // Get event by ID
 router.post('/', authMiddleware, createEvent); // Create event
 router.put('/:id', authMiddleware, updateEvent); // Update event
 router.delete('/:id', authMiddleware, deleteEvent); // Delete event
-router.get('/leader/myevents', authMiddleware, getMyEvents); // Get events by club leader
+router.get('/club-admin/myevents', authMiddleware, getMyEvents); // Get events by club leader
 
 // Registration route (can be used by both authenticated and non-authenticated users)
 router.post('/:id/register', registerForEvent);

@@ -9,6 +9,10 @@ const eventRoutes = require('./routes/eventRoutes');
 const fileupload = require('express-fileupload');
 const cron = require('node-cron');
 const { sendEventReminders } = require('./controllers/eventController');
+const clubRoutes = require('./routes/clubRoutes');  // Add club routes
+const followRoutes = require('./routes/followRoutes');  // Add follow/unfollow routes
+
+
 
 const app = express();
 
@@ -26,6 +30,9 @@ app.use(cors());
 app.use('/api', authRoutes);
 app.use('/posts', postRoutes);
 app.use('/events', eventRoutes);
+app.use('/clubs', clubRoutes);
+app.use('/follow', followRoutes);
+
 
 // Schedule reminder emails to be sent daily at 8:00 AM
 cron.schedule('0 8 * * *', async () => {

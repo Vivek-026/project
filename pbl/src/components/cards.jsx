@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 function Card({ club, title, content, image, likes }) {
   const [expanded, setExpanded] = useState(false);
-  const [likeCount, setLikeCount] = useState(likes || 40);
+  const [likeCount, setLikeCount] = useState(likes || 0);
   const [isLiked, setIsLiked] = useState(false);
   const maxLength = 100; 
   

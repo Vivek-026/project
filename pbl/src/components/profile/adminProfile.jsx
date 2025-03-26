@@ -5,25 +5,28 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { setCards } from "../../store/cardSlice";
 import { getCards } from "../../auth/fetchCards";
+import PostList from "../form/PostList";
 
-function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
+function AdminProfile({ followers = 245 }) {
   const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
   const user = localStorage.getItem("user");
-  const name = localStorage.getItem("name");
+  const name = localStorage.getItem("club");
+  const admin= localStorage.getItem("name");
   const email = localStorage.getItem("email");
+  const clubBio = localStorage.getItem("description");
 
   useEffect(() => {
     const fetchCards = async () => {
-      const data = await getCards(); 
-      dispatch(setCards(data)); 
+        const data = await getCards(); 
+        dispatch(setCards(data)); 
     };
 
-    // Only fetch if cards array is empty
     if (!cards.length) {
-      fetchCards();
+        fetchCards();
     }
-  }, [dispatch, cards.length]);
+}, [dispatch, cards.length, getCards]); // ✅ Corrected
+
 
   const filteredCards = cards.filter((card) => card.name === name);
 
@@ -46,34 +49,29 @@ function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
             </div>
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{name}</h1>
-              <p className="text-gray-600 mb-4 max-w-2xl">{clubBio}</p>
+              <p className="text-gray-600 mb-2 max-w-2xl">{clubBio}</p>
+              <p className="text-gray-600 mb-4 max-w-2xl">ADMIN: {admin}</p>
               <div className="flex items-center justify-center md:justify-start gap-6">
                 <div className="text-center">
                   <span className="block text-2xl font-bold text-blue-600">{followers}</span>
                   <span className="text-sm text-gray-500">Followers</span>
                 </div>
-                <Link to="/newPost">
+                {/* <Link to="/newPost">
                   <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg">
                     Create New Post
                   </button>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>
 
           {/* Posts Section */}
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">
-              Recent Posts
-            </h2>
             {filteredCards.length === 0 ? (
               <div className="text-center py-12 bg-gray-50 rounded-lg">
-                <p className="text-gray-500 text-lg">
-                  No posts available for {name}.
-                </p>
                 <Link to="/newPost">
                   <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
-                    Create Your First Post
+                    Create New Post
                   </button>
                 </Link>
               </div>
@@ -91,6 +89,11 @@ function AdminProfile({ clubBio = "club about/info", followers = 245 }) {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* ✅ Show Posts Below Profile */}
+          <div className="mt-8">
+                <PostList />
           </div>
         </div>
       </div>

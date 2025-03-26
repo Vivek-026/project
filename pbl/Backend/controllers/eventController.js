@@ -16,8 +16,8 @@ const transporter = nodemailer.createTransport({
 exports.createEvent = async (req, res) => {
   try {
     // Check if user is a club leader
-    if (req.user.role !== 'leader') {
-      return res.status(403).json({ message: 'Only club leaders can create events' });
+    if (req.user.role !== 'club-admin') {
+      return res.status(403).json({ message: 'Only  club-admin can create events' });
     }
 
     const { title, description, date, time, location, club, registrationLimit } = req.body;
@@ -89,8 +89,8 @@ exports.getEventById = async (req, res) => {
 exports.updateEvent = async (req, res) => {
   try {
     // Check if user is a club leader
-    if (req.user.role !== 'leader') {
-      return res.status(403).json({ message: 'Only club leaders can update events' });
+    if (req.user.role !== 'club-admin') {
+      return res.status(403).json({ message: 'Only club-admin can update events' });
     }
 
     const event = await Event.findById(req.params.id);
@@ -137,7 +137,7 @@ exports.updateEvent = async (req, res) => {
 exports.deleteEvent = async (req, res) => {
   try {
     // Check if user is a club leader
-    if (req.user.role !== 'leader') {
+    if (req.user.role !== 'club-admin') {
       return res.status(403).json({ message: 'Only club leaders can delete events' });
     }
 
@@ -286,8 +286,8 @@ exports.sendEventReminders = async (req, res) => {
 // Get events by club leader
 exports.getMyEvents = async (req, res) => {
   try {
-    if (req.user.role !== 'leader') {
-      return res.status(403).json({ message: 'Only club leaders can access this endpoint' });
+    if (req.user.role !== 'club-admin') {
+      return res.status(403).json({ message: 'Only club-admin can access this endpoint' });
     }
     
     const events = await Event.find({ organizer: req.user.id })

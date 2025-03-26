@@ -1,130 +1,104 @@
-import React, { useEffect, useState } from "react";
-import { loginUser as apiLoginUser } from "../../auth/loginuser"; 
-import { Navigate, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { login } from "../../store/authSlice";
-import { useSelector } from "react-redux";
-
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const state=useSelector((state)=>state.auth.status);
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import { loginSuccess } from "../../store/authSlice";
 
 
-  useEffect(()=>{
-    if(state){
-      navigate('/');
-    }
+function Login() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state) => state.auth.status);
 
-  },[])
-  
-  
+    useEffect(() => {
+        // Redirect to profile page if already logged in
+        const role = localStorage.getItem("role");
+        if (isAuthenticated) {
+            if (role === "student") {
+                navigate("/student-profile");
+            } else if (role === "club-admin") {
+                navigate("/admin-profile");
+            } else {
+                navigate("/");
+            }
+        }
+    }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    try {
-      const user = await apiLoginUser(email, password, role);
-      
-      if (user) {
-        // Dispatch to Redux store
-        dispatch(login({ userData: user.user }));
-  
-        // Store authentication data in localStorage
-        localStorage.setItem("token", user.user._id);
-        localStorage.setItem("name",user.user.name);
-        localStorage.setItem("email",email);
-        localStorage.setItem("role", user.user.role); // Store the role
-        localStorage.setItem("authStatus", "true"); // Store login status
-        
-        // If you want to store the complete user data
-        localStorage.setItem("userData", JSON.stringify(user.user));
-  
-        navigate('/');
-      } else {
-        console.log("No user found");
-      }
-  
-    } catch (error) {
-      console.error("Error in logging in:", error);
-    }
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-96 border-purple-500 border-2">
-        <h2 className="text-2xl font-bold text-center mb-6 text-black">Login</h2>
+        try {
+            const response = await axios.post("http://localhost:5000/api/login", { email, password });
 
-        <form onSubmit={handleSubmit}>
-          {/* Email */}
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-black m-1">Email</label>
-            <input
-              type="email"
-              id="email"
-              className="w-full p-3 border border-gray-300 rounded-3xl"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+            if (response.status === 200) {
+                const { token, user } = response.data;
 
-          {/* Password */}
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700 m-1">Password</label>
-            <div className="relative">
-              <input
-                type="password"
-                id="password"
-                className="w-full p-3 border border-gray-300 rounded-3xl"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+                // Store token and user details
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", user.role);
+                localStorage.setItem("name", user.name);
+                localStorage.setItem("email", user.email);
+                localStorage.setItem("authStatus", "true"); // Store login status
+                localStorage.setItem("userData", JSON.stringify(user)); // Store full user data
+
+                // Update Redux state
+                dispatch(loginSuccess(user));
+
+                // Redirect based on role
+                if (user.role === "student") {
+                    navigate("/stuprofile");
+                } else if (user.role === "club-admin") {
+                    navigate("/adminprofile");
+                } else {
+                    navigate("/");
+                }
+            } else {
+                alert("Invalid credentials");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            alert("Login failed!");
+        }
+    };
+
+    return (
+        <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
+            <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded-md">Login</button>
+            </form>
+
+            {/* ✅ Added Forgot Password & Sign Up Links */}
+            <div className="text-center mt-4">
+                <p className="text-gray-600">
+                    <Link to="/forgot-password" className="text-blue-500 hover:underline">
+                        Forgot Password?
+                    </Link>
+                </p>
+                <p className="text-gray-600">
+                    Don't have an account? <Link to="/signup" className="text-blue-500 hover:underline">Sign Up</Link>
+                </p>
             </div>
-          </div>
-
-          {/* Role Selection */}
-          <div className="mb-4">
-            <label htmlFor="role" className="block text-gray-700 m-1">Role</label>
-            <select
-              id="role"
-              className="w-full p-3 border border-gray-300 rounded-3xl"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="student">Student</option>
-              <option value="club-admin">Club Admin</option>
-            </select>
-          </div>
-
-          {/* Login Button */}
-          <div className="flex justify-center mb-4">
-            <button
-              type="submit"
-              className="w-full bg-purple-500 text-white p-3 rounded-md hover:bg-purple-600 transition duration-200"
-            >
-              Login
-            </button>
-          </div>
-
-          {/* Forgot Password & Signup */}
-          <div className="text-center text-gray-600">
-            <p>
-              <a href="/forgot-password" className="hover:underline">Forgot Password?</a>
-            </p>
-            <p className="mt-2">
-              Don’t have an account?{" "}
-              <a href="/signup" className="text-purple-500 hover:underline">Sign Up</a>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
+        </div>
+    );
+}
 
 export default Login;

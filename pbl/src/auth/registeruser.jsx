@@ -1,22 +1,21 @@
-export const registerUser = async (name,email, password, role) => {
+import axios from "axios";
+
+export const registerUser = async (name, email, password, role, club = "") => {
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password, role }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Register failed");
-      }
-  
-      const data = await response.json();
-      return data;
+        console.log("Sending registration request with:", { name, email, password, role, club });
+
+        const response = await axios.post("http://localhost:5000/api/register", {
+            name,
+            email,
+            password,
+            role,
+            club: role === "club-admin" ? club : undefined, // ✅ Always send club for club-admins
+        });
+
+        console.log("Registration successful:", response.data);
+        return response.data;
     } catch (error) {
-      console.error("Register Error:", error);
-      throw error;
+        console.error("Register Error:", error.response?.data || error);
+        throw error.response?.data || { message: "Registration failed" };
     }
-  };
+};

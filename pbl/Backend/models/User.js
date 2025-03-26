@@ -1,18 +1,25 @@
-// models/User.js (User Schema)
-const mongoose = require('mongoose');
-const UserSchema = new mongoose.Schema({
-    name: String,
-    email: { type: String, unique: true },
-    password: String,
-    role: { 
-        type: String, 
-        enum: ['user', 'leader', 'admin'],
-        default: 'user' 
+const mongoose = require("mongoose");
+
+const UserSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
+    role: {
+      type: String,
+      enum: ["student", "leader", "club-admin"],
+      default: "student",
+      required: true,
     },
-    club: { 
-        type: String,
-        required: function() { return this.role === 'leader'; }
+    club: {
+      type: String,
+      type: String,
+    required: function () { return this.role === "club-admin"; }, 
+    default: function () { return this.role === "club-admin" ? "" : null; }
     },
-    club:String,
-}, { timestamps: true });
-module.exports = mongoose.model('User', UserSchema);
+    followedClubs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Club" }], // ✅ Allow following multiple clubs
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("User", UserSchema);

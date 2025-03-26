@@ -20,6 +20,8 @@ import Store from './store/store.jsx'
 import { useSelector } from 'react-redux'
 import AdminProfile from './components/profile/adminProfile.jsx'
 import StuProfile from './components/profile/stuProfile.jsx'
+import ClubRegistrationForm from './components/form/club.jsx'
+import Clubs from './components/allClubs.jsx'
 
 //const status=useSelector((state)=>state.auth.status);
 
@@ -50,6 +52,9 @@ const router=createBrowserRouter([
       },{
         path:'/stuprofile',
         element: <StuProfile/>
+      },{
+        path: 'clubs',
+        element: <Clubs/>
       }
 
     ]
