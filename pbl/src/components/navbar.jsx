@@ -45,10 +45,10 @@ function Navbar() {
           <Link to={'/clubs'}>Clubs</Link>
         </li>
         <li className="hover:text-purple-600">
-          <Link to={'/about'}>About</Link>
+          <Link to={'/events'}>Events</Link>
         </li>
         <li className="hover:text-purple-600">
-          <Link to={'/about'}>About</Link>
+          <Link to={'/calender'}>Calender</Link>
         </li>
 
         {/* Conditional Rendering for Login/Profile */}

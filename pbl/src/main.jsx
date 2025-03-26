@@ -22,6 +22,8 @@ import AdminProfile from './components/profile/adminProfile.jsx'
 import StuProfile from './components/profile/stuProfile.jsx'
 import ClubRegistrationForm from './components/form/club.jsx'
 import Clubs from './components/allClubs.jsx'
+import Events from './components/events.jsx'
+import Calender from './components/calender.jsx'
 
 //const status=useSelector((state)=>state.auth.status);
 
@@ -55,6 +57,12 @@ const router=createBrowserRouter([
       },{
         path: 'clubs',
         element: <Clubs/>
+      },{
+        path: 'events',
+        element: <Events/>
+      },{
+        path: 'calender',
+        element: <Calender/>
       }
 
     ]
