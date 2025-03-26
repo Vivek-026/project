@@ -34,7 +34,7 @@ const Login = () => {
         dispatch(login({ userData: user.user }));
   
         // Store authentication data in localStorage
-        localStorage.setItem("token", user.user._id);
+        localStorage.setItem("id", user.user._id);
         localStorage.setItem("name",user.user.name);
         localStorage.setItem("email",email);
         localStorage.setItem("role", user.user.role); // Store the role

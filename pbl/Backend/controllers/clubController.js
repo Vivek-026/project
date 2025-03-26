@@ -21,3 +21,12 @@ exports.createClub = async (req, res) => {
     }
 };
 
+exports.getAllClubs = async (req, res) => {
+    try {
+        const clubs = await Club.find(); // Fetch all clubs from the database
+        res.json({ clubs }); // Send clubs in response
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching clubs" });
+    }
+};
+
