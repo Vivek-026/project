@@ -60,7 +60,7 @@ const Signup = () => {
         } else {
           // In case no token is returned, we need at least a user ID
           // Note: This won't work with your current middleware but is a fallback
-          localStorage.setItem("token", user.user._id);
+          localStorage.setItem("id", user.user._id);
           console.warn("No token returned from registerUser - using user ID instead");
         }
         

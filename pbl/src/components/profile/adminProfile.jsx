@@ -9,25 +9,40 @@ import { getCards } from "../../auth/fetchCards";
 function AdminProfile({ followers = 245 }) {
   const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
-  const user = localStorage.getItem("user");
   const name = localStorage.getItem("club");
-  const admin= localStorage.getItem("name");
-  const email = localStorage.getItem("email");
+  const admin = localStorage.getItem("name");
   const clubBio = localStorage.getItem("description");
 
   useEffect(() => {
     const fetchCards = async () => {
-      const data = await getCards(); 
-      dispatch(setCards(data)); 
+      const data = await getCards();
+      dispatch(setCards(data));
     };
 
-    // Only fetch if cards array is empty
     if (!cards.length) {
       fetchCards();
     }
   }, [dispatch, cards.length]);
 
   const filteredCards = cards.filter((card) => card.name === name);
+
+  // 🔥 Delete function
+  const handleDeletePost = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/posts/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete post");
+
+      // Update state to remove the deleted post
+      dispatch(setCards(cards.filter((card) => card._id !== id)));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -85,11 +100,13 @@ function AdminProfile({ followers = 245 }) {
                 {filteredCards.slice().reverse().map((card, index) => (
                   <AdminCard
                     key={index}
+                    id={card._id}
                     club={card.name || "Unknown Club"}
                     title={card.title || "Untitled"}
                     content={card.content || "No content available."}
                     image={card.image || "https://via.placeholder.com/150"}
                     likes={card.likes || 0}
+                    onDelete={handleDeletePost} // 🔥 Pass the delete function
                   />
                 ))}
               </div>

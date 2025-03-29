@@ -35,23 +35,26 @@ const Login = () => {
   
         // Store authentication data in localStorage
         localStorage.setItem("id", user.user._id);
-        localStorage.setItem("name",user.user.name);
-        localStorage.setItem("email",email);
-        localStorage.setItem("role", user.user.role); // Store the role
-        localStorage.setItem("authStatus", "true"); // Store login status
-        
-        // If you want to store the complete user data
-        localStorage.setItem("userData", JSON.stringify(user.user));
+        localStorage.setItem("name", user.user.name);
+        localStorage.setItem("email", email);
+        localStorage.setItem("role", user.user.role);
+        localStorage.setItem("authStatus", "true");
+  
+        // If user is a club-admin, store club details
+        if (user.user.role === "club-admin" && user.club) {
+          localStorage.setItem("club", user.club.name);
+          localStorage.setItem("description", user.club.description);
+        }
   
         navigate('/');
       } else {
         console.log("No user found");
       }
-  
     } catch (error) {
       console.error("Error in logging in:", error);
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

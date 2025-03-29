@@ -8,7 +8,7 @@ function FollowButton({ clubId }) {
    useEffect(() => {
      const checkFollowStatus = async () => {
        try {
-         const userId = localStorage.getItem("id");  // Ensure consistency
+         const userId = localStorage.getItem("id");  
          if (!userId) {
            setIsLoading(false);
            return;
@@ -16,7 +16,9 @@ function FollowButton({ clubId }) {
 
          const response = await axios.get(`http://localhost:5000/api/follow/${userId}/followedClubs`);
          const followedClubs = response.data.followedClubs || [];
-         setIsFollowing(followedClubs.includes(clubId));
+
+         // ✅ Corrected check: Compare `clubId` with `id` field of followedClubs
+         setIsFollowing(followedClubs.some(club => club.id === clubId));
        } catch (error) {
          console.error("Error checking follow status:", error);
        } finally {
@@ -30,7 +32,6 @@ function FollowButton({ clubId }) {
    const handleFollowClick = async () => {
      try {
        const userId = localStorage.getItem("id");
-       console.log(userId);
        if (!userId) {
          alert("Please log in to follow/unfollow clubs.");
          return;

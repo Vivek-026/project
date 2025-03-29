@@ -24,6 +24,7 @@ import ClubRegistrationForm from './components/form/club.jsx'
 import Clubs from './components/allClubs.jsx'
 import Events from './components/events.jsx'
 import Calender from './components/calender.jsx'
+import EditPost from './components/EditPost.jsx'
 
 //const status=useSelector((state)=>state.auth.status);
 
@@ -63,6 +64,9 @@ const router=createBrowserRouter([
       },{
         path: 'calender',
         element: <Calender/>
+      },{
+         path:"/edit/:id",
+        element:<EditPost /> 
       }
 
     ]

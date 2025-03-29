@@ -13,11 +13,13 @@ function LogoutButton(){
         try {
 
             dispatch(logout())
-            localStorage.removeItem("token");
+            localStorage.removeItem("id");
             localStorage.removeItem("name");
             localStorage.removeItem("role");
             localStorage.removeItem("authStatus");
             localStorage.removeItem("userData");
+            localStorage.removeItem("followedClubs");
+            
             navigate('/login')
             
         } catch (error) {

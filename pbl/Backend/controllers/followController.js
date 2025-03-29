@@ -82,26 +82,23 @@ exports.unfollowClub = async (req, res) => {
         console.error("Unfollow Club Error:", err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
-};
-exports.getFollowedClubs = async (req, res) => {
+};exports.getFollowedClubs = async (req, res) => {
     try {
         const { userId } = req.params;
 
-        // Find user and get followed clubs
-        const user = await User.findById(userId);
+        // Find user and populate followed clubs
+        const user = await User.findById(userId).populate("followedClubs", "name");
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: "User not found" });
         }
 
-        // Convert ObjectIds to strings
-        const followedClubIds = user.followedClubs.map(id => id.toString());
-
+        // Return club names instead of just IDs
         return res.status(200).json({
-            followedClubs: followedClubIds
+            followedClubs: user.followedClubs.map(club => ({ id: club._id, name: club.name }))
         });
     } catch (err) {
         console.error("Get Followed Clubs Error:", err);
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: "Server error", error: err.message });
     }
 };
