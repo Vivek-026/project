@@ -1,42 +1,53 @@
 import React, { useState } from "react";
-import { Add } from "../../auth/add";
 
 function NewPost() {
     const [imagePreview, setImagePreview] = useState(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [image, setImage] = useState("");
+    const [image, setImage] = useState(null); // Store file object
     const [likes, setLikes] = useState(0);
-    const user=localStorage.getItem("user")
-    //const name=user.name;
-    const name=localStorage.getItem("name");
+    const club = localStorage.getItem("club");
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-                setImage(reader.result); 
-            };
-            reader.readAsDataURL(file);
+            setImagePreview(URL.createObjectURL(file)); // Show image preview
+            setImage(file); // Store actual file
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!image) {
+            alert("Please select an image!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("name", club);
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("image", image); // Append file
+        formData.append("likes", likes);
+
         try {
+            const response = await fetch("http://localhost:5000/posts", {
+                method: "POST",
+                body: formData,
+            });
 
-            const response=await Add(name,title,content,image,likes);
-            console.log("Post Data:", { name, title, content, image, likes });
-
-            setTitle("");
-            setContent("");
-            setImage("");
-            setImagePreview(null);
-            setLikes(0);
-
-            console.log("Post added successfully!");
+            const data = await response.json();
+            if (response.ok) {
+                alert("Post uploaded successfully!");
+                setTitle("");
+                setContent("");
+                setImage(null);
+                setImagePreview(null);
+                setLikes(0);
+            } else {
+                alert("Failed to upload post: " + data.message);
+            }
         } catch (error) {
             console.log("Error in adding post:", error);
         }
