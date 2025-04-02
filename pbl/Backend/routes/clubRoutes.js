@@ -1,10 +1,10 @@
 const express = require("express");
 const { createClub, getAllClubs } = require("../controllers/clubController");
-const authMiddleware = require("../middleware/authMiddleware");
+const protect = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post("/create", authMiddleware, createClub);
+router.post("/create", protect, createClub);
 
 router.get("/", getAllClubs);
 
