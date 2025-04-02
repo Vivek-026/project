@@ -75,6 +75,11 @@ function AdminProfile({ followers = 245 }) {
                     Create New Post
                   </button>
                 </Link>
+                <Link to="/create-event">
+                  <button className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                    Create New Event
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

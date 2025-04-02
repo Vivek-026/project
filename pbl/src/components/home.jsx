@@ -39,7 +39,7 @@ function Home() {
           // Fetch cards for followed clubs
           if (clubs.length > 0) {
             try {
-              const followedCardsResponse = await axios.get('http://localhost:5000/api/cards/followed', {
+              const followedCardsResponse = await axios.get('http://localhost:5000/api/card/followed', {
                 params: { clubs: clubs }
               });
               

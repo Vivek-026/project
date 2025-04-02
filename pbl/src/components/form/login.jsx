@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { loginUser as apiLoginUser } from "../../auth/loginuser"; 
-import { Navigate, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../store/authSlice";
-import { useSelector } from "react-redux";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,17 +10,13 @@ const Login = () => {
   const [role, setRole] = useState("student");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const state=useSelector((state)=>state.auth.status);
+  const state = useSelector((state) => state.auth.status);
 
-
-  useEffect(()=>{
-    if(state){
-      navigate('/');
+  useEffect(() => {
+    if (state) {
+      navigate("/");
     }
-
-  },[])
-  
-  
+  }, [state]);  // ✅ Add state dependency
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,23 +25,28 @@ const Login = () => {
       const user = await apiLoginUser(email, password, role);
       
       if (user) {
-        // Dispatch to Redux store
+        // ✅ Dispatch to Redux store
         dispatch(login({ userData: user.user }));
   
-        // Store authentication data in localStorage
+        // ✅ Store authentication details in localStorage
         localStorage.setItem("id", user.user._id);
         localStorage.setItem("name", user.user.name);
         localStorage.setItem("email", email);
         localStorage.setItem("role", user.user.role);
         localStorage.setItem("authStatus", "true");
+
+        // ✅ Store the authentication token
+        if (user.token) {
+          localStorage.setItem("token", user.token);
+        }
   
-        // If user is a club-admin, store club details
+        // ✅ Store club details for club-admin
         if (user.user.role === "club-admin" && user.club) {
           localStorage.setItem("club", user.club.name);
           localStorage.setItem("description", user.club.description);
         }
   
-        navigate('/');
+        navigate("/");
       } else {
         console.log("No user found");
       }
@@ -54,7 +54,6 @@ const Login = () => {
       console.error("Error in logging in:", error);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -78,16 +77,14 @@ const Login = () => {
           {/* Password */}
           <div className="mb-4">
             <label htmlFor="password" className="block text-gray-700 m-1">Password</label>
-            <div className="relative">
-              <input
-                type="password"
-                id="password"
-                className="w-full p-3 border border-gray-300 rounded-3xl"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <input
+              type="password"
+              id="password"
+              className="w-full p-3 border border-gray-300 rounded-3xl"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           {/* Role Selection */}
