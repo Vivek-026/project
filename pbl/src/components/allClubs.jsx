@@ -19,7 +19,6 @@ function Clubs() {
         
         const response = await axios.get("http://localhost:5000/api/clubs");
         
-        // Ensure response has the expected structure
         if (response.data && Array.isArray(response.data.clubs)) {
           setClubs(response.data.clubs);
           setFilteredClubs(response.data.clubs);
@@ -49,68 +48,116 @@ function Clubs() {
     setFilteredClubs(filtered);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 md:ml-64 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-6">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500"></div>
+          <p className="text-gray-600 text-xl font-medium">Discovering clubs...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-purple-800 flex items-center justify-center gap-4">
-          <BookOpen className="text-purple-600" size={40} />
-          Discover Clubs
-        </h1>
-        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-          Explore a world of interests, connect with like-minded individuals, 
-          and join clubs that spark your passion.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50 md:ml-64">
+      <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12 py-12">
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-5xl font-bold text-purple-800 flex items-center justify-center gap-6 mb-6">
+            <BookOpen className="text-purple-600" size={56} />
+            Discover Clubs
+          </h1>
+          <p className="text-gray-600 text-xl max-w-3xl mx-auto leading-relaxed">
+            Explore a world of interests, connect with like-minded individuals, 
+            and join clubs that spark your passion.
+          </p>
+        </motion.div>
 
-      <div className="mb-8 max-w-2xl mx-auto relative">
-        <input 
-          type="text" 
-          placeholder="Search clubs by name or description..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="w-full p-3 pl-10 border-2 border-purple-200 rounded-full focus:outline-none focus:border-purple-500 transition-all"
-        />
-        <Search 
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" 
-          size={20} 
-        />
-      </div>
+        {/* Search Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-16 max-w-3xl mx-auto"
+        >
+          <div className="relative">
+            <input 
+              type="text" 
+              placeholder="Search clubs by name or description..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-full p-6 pl-16 bg-white border-2 border-purple-200 rounded-2xl 
+                text-lg focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-200 
+                transition-all duration-200 shadow-lg"
+            />
+            <Search 
+              className="absolute left-6 top-1/2 transform -translate-y-1/2 text-purple-400" 
+              size={24} 
+            />
+          </div>
+        </motion.div>
 
-      {error ? (
-        <div className="text-center text-red-600 flex flex-col items-center justify-center gap-2 p-4 bg-red-50 rounded-lg max-w-md mx-auto">
-          <AlertCircle size={40} className="text-red-500" />
-          <p className="font-medium">Error loading clubs</p>
-          <p className="text-sm text-gray-600">{error}</p>
+        {/* Content Section */}
+        <div className="relative">
+          {error ? (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white rounded-2xl shadow-lg p-12 max-w-2xl mx-auto text-center"
+            >
+              <AlertCircle size={64} className="text-red-500 mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Error loading clubs</h3>
+              <p className="text-gray-600 text-lg">{error}</p>
+            </motion.div>
+          ) : filteredClubs.length > 0 ? (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
+            >
+              <AnimatePresence>
+                {filteredClubs.map((club) => (
+                  <motion.div
+                    key={club._id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="transform hover:scale-105 transition-transform duration-200"
+                  >
+                    <ClubCard 
+                      name={club.name} 
+                      clubId={club._id} 
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white rounded-2xl shadow-lg p-16 text-center max-w-2xl mx-auto"
+            >
+              <Users size={72} className="text-purple-400 mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                No clubs {searchTerm ? 'match your search' : 'found'}
+              </h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                {searchTerm 
+                  ? 'Try adjusting your search terms or browse all clubs'
+                  : 'Check back later for new clubs to join!'
+                }
+              </p>
+            </motion.div>
+          )}
         </div>
-      ) : isLoading ? (
-        <div className="text-center text-gray-600 flex items-center justify-center gap-2">
-          <PlusCircle className="animate-pulse" />
-          Loading Clubs...
-        </div>
-      ) : filteredClubs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence>
-            {filteredClubs.map((club) => (
-              <motion.div
-                key={club._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ClubCard 
-                  name={club.name} 
-                  clubId={club._id} 
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      ) : (
-        <div className="text-center text-gray-600 flex flex-col items-center justify-center gap-4">
-          <Users size={40} className="text-purple-400" />
-          <p>No clubs {searchTerm ? 'match your search' : 'found'}</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 function EditPost() {
-    const { id } = useParams(); // Get post ID from URL
+    const { id } = useParams();
     const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -11,7 +12,6 @@ function EditPost() {
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
-        // Fetch post data for pre-filling the form
         const fetchPost = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/posts/${id}`);
@@ -38,6 +38,7 @@ function EditPost() {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         const formData = new FormData();
         formData.append("title", title);
@@ -53,64 +54,94 @@ function EditPost() {
             if (!res.ok) throw new Error("Failed to update post");
 
             alert("Post updated successfully!");
-            navigate("/"); // Redirect to home or posts page
+            navigate("/");
         } catch (error) {
             console.error("Error updating post:", error);
+            alert("Failed to update post. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-            <h2 className="text-2xl font-bold mb-6 text-center">Edit Post</h2>
-            <form onSubmit={handleUpdate} className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Title</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Content</label>
-                    <textarea
-                        rows="6"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    ></textarea>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Upload Image</label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                    />
-                </div>
-
-                {imagePreview && (
-                    <div className="mt-4">
-                        <h4 className="text-sm font-medium text-gray-700">Image Preview:</h4>
-                        <img src={imagePreview} alt="Preview" className="mt-2 max-w-full h-auto rounded-lg shadow-sm" />
+        <div className="min-h-screen bg-gray-50 md:ml-72 py-8">
+            <div className="max-w-3xl mx-auto px-4">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-8">
+                        <h2 className="text-3xl font-bold text-white text-center">Edit Post</h2>
                     </div>
-                )}
 
-                <div>
-                    <button
-                        type="submit"
-                        className="w-full px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    >
-                        Save Changes
-                    </button>
+                    <form onSubmit={handleUpdate} className="p-6 space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Title
+                            </label>
+                            <input
+                                type="text"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                                    focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                                    transition-all duration-200 outline-none"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Content
+                            </label>
+                            <textarea
+                                rows="6"
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                                    focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                                    transition-all duration-200 outline-none"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Update Image
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200
+                                    file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700
+                                    hover:file:bg-purple-100 transition-all duration-200"
+                            />
+                        </div>
+
+                        {imagePreview && (
+                            <div className="rounded-xl overflow-hidden shadow-lg">
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-64 object-cover"
+                                />
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`w-full px-6 py-4 rounded-xl text-white font-semibold text-lg
+                                transition-all duration-300 transform hover:scale-[1.02]
+                                ${isSubmitting 
+                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                    : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
+                                }`}
+                        >
+                            {isSubmitting ? 'Saving Changes...' : 'Save Changes'}
+                        </button>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }

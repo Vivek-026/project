@@ -5,10 +5,9 @@ import StuClubs from "../stuClubs";
 function StuProfile() {
     const name = localStorage.getItem("name");
     const email = localStorage.getItem("email");
-    const userId = localStorage.getItem("id"); // Get userId from local storage
+    const userId = localStorage.getItem("id");
     const [clubs, setClubs] = useState([]);
 
-    // Fetch followed clubs from backend
     useEffect(() => {
         const fetchFollowedClubs = async () => {
             try {
@@ -17,7 +16,7 @@ function StuProfile() {
                     throw new Error("Failed to fetch followed clubs");
                 }
                 const data = await response.json();
-                setClubs(data.followedClubs); // Update state with fetched club names
+                setClubs(data.followedClubs);
             } catch (error) {
                 console.error("Error fetching followed clubs:", error);
             }
@@ -25,49 +24,78 @@ function StuProfile() {
         
         if (userId) {
             fetchFollowedClubs();
-            console.log(clubs);
         }
-    }, [userId]); // Run effect when userId changes
+    }, [userId]);
 
     return (
-        <div className="p-6 w-full bg-gray-50 rounded-xl shadow-md">
-            {/* Profile Header with Logout Button Positioned Correctly */}
-            <div className="flex justify-between items-center mb-6">
-                <div className="text-3xl font-bold text-indigo-800 border-b-2 border-indigo-200 pb-2">PROFILE</div>
-                <LogoutButton />
-            </div>
+        <div className="min-h-screen bg-gray-50 md:ml-64">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    {/* Profile Header with Gradient */}
+                    <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 sm:px-8 py-8">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white">Student Dashboard</h2>
+                            <LogoutButton />
+                        </div>
+                    </div>
 
-            <div className="flex gap-8">
-                {/* Profile Details Section - Left Side */}
-                <div className="w-1/3 relative">
-                    <div className="border border-gray-300 rounded-lg p-6 shadow-md bg-white hover:shadow-lg transition-shadow duration-300 h-full">
-                        <div className="flex flex-col items-center">
-                            <div className="h-48 w-48 rounded-full border-4 border-indigo-300 flex-shrink-0 mb-6 bg-gray-100 shadow-inner"></div>
+                    <div className="p-6 sm:p-8">
+                        <div className="flex flex-col lg:flex-row gap-8">
+                            {/* Profile Details Section */}
+                            <div className="w-full lg:w-1/3">
+                                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                                    <div className="flex flex-col items-center">
+                                        {/* Profile Avatar */}
+                                        <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-100 to-indigo-50 border-4 border-white shadow-xl flex items-center justify-center mb-6 transform hover:scale-105 transition-transform duration-300">
+                                            <span className="text-3xl sm:text-4xl font-bold text-purple-600">
+                                                {name?.charAt(0)}
+                                            </span>
+                                        </div>
 
-                            <div className="text-left w-full mt-4 p-4 bg-gray-50 rounded-lg">
-                                <div className="text-2xl font-semibold text-gray-800 mb-3">
-                                    Name: <span className="text-indigo-700">{name}</span>
+                                        {/* Profile Info Card */}
+                                        <div className="w-full space-y-4">
+                                            <div className="bg-gray-50 rounded-xl p-4 transform hover:scale-105 transition-transform duration-300">
+                                                <h3 className="text-lg font-semibold text-gray-600">Name</h3>
+                                                <p className="text-xl font-bold text-purple-600">{name}</p>
+                                            </div>
+                                            
+                                            <div className="bg-gray-50 rounded-xl p-4 transform hover:scale-105 transition-transform duration-300">
+                                                <h3 className="text-lg font-semibold text-gray-600">Email</h3>
+                                                <p className="text-xl font-bold text-purple-600">{email}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="text-xl text-gray-700">
-                                    Email: <span className="text-indigo-600">{email}</span>
+                            </div>
+
+                            {/* Following Section */}
+                            <div className="w-full lg:w-2/3">
+                                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 h-full">
+                                    <h2 className="text-2xl font-bold text-purple-600 mb-6 pb-2 border-b border-gray-200">
+                                        Clubs You Follow
+                                    </h2>
+                                    
+                                    {clubs.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {clubs.map((club, index) => (
+                                                <div key={index} className="transform hover:scale-105 transition-transform duration-300">
+                                                    <StuClubs club={club.name} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                                            <p className="text-gray-500 text-xl">
+                                                You haven't followed any clubs yet.
+                                            </p>
+                                            <p className="text-gray-400 mt-2">
+                                                Explore and follow clubs to see their updates here!
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                {/* Following Section */}
-                <div className="w-2/3 border border-gray-200 rounded-lg p-6 bg-white shadow-md">
-                    <div className="text-2xl font-bold mb-6 text-indigo-700 border-b border-gray-200 pb-2">FOLLOWING</div>
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Render followed clubs */}
-                        {clubs.length > 0 ? (
-                            clubs.map((club, index) => <StuClubs key={index} club={club.name} />)
-
-                            
-                        ) : (
-                            <p className="text-gray-600">Not following any clubs yet.</p>
-                        )}
                     </div>
                 </div>
             </div>

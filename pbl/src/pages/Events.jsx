@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useFetchEvents } from "../hooks/useFetchEvents";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, X, MapPin, Clock, Users as UsersIcon, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import EditEventForm from "../components/events/EditEventForm";
 import axiosInstance from "../api/axiosInstance";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Events = () => {
   const { user } = useAuth();
@@ -42,7 +43,6 @@ const Events = () => {
   };
 
   const handleEdit = (event) => setEditingEvent(event);
-
   const handleRegisterClick = (event) => {
     setRegisterEvent(event);
     setFormData({
@@ -72,153 +72,269 @@ const Events = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 md:ml-64 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-6">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500"></div>
+          <p className="text-gray-600 text-xl font-medium">Loading events...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 p-6">
-      {/* Heading */}
-      <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-purple-800 flex items-center justify-center gap-4">
-          <CalendarDays className="text-purple-600" size={40} />
-          Upcoming Events
-        </h1>
-        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-          Stay updated with the latest events happening in our community!
-        </p>
-      </div>
-
-      {/* Club Admin: Create Event */}
-      {user?.role === "club-admin" && (
-        <button
-          onClick={() => navigate("/create-event")}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg mb-4"
+    <div className="min-h-screen bg-gray-50 md:ml-64">
+      <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12 py-12">
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
         >
-          Create New Event
-        </button>
-      )}
+          <h1 className="text-5xl font-bold text-purple-800 flex items-center justify-center gap-6 mb-6">
+            <CalendarDays className="text-purple-600" size={56} />
+            Upcoming Events
+          </h1>
+          <p className="text-gray-600 text-xl max-w-3xl mx-auto leading-relaxed">
+            Stay updated with the latest events happening in our community!
+          </p>
+        </motion.div>
 
-      {/* Event List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-        {loading && <p>Loading events...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-
-        {events.length > 0 ? (
-          events.map((event) => (
-            <Card key={event._id} className="shadow-lg rounded-lg overflow-hidden border">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-52 object-cover"
-                onError={(e) => {
-                  e.target.src = "/assets/placeholder.png";
-                }}
-              />
-              <CardContent className="p-4">
-                <h2 className="text-xl font-semibold text-center mb-2">
-                  🎉 {event.title}
-                </h2>
-                <p className="text-gray-700">
-                  <strong>📍 Location:</strong> {event.location}
-                </p>
-                <p className="text-gray-700">
-                  <strong>🕒 Time:</strong>{" "}
-                  {new Date(event.date).toDateString()} at {event.time}
-                </p>
-                <p className="text-gray-700">
-                  <strong>📝 Description:</strong> {event.description}
-                </p>
-                <p className="text-gray-700">
-                  <strong>👥 Registration Limit:</strong> {event.registrationLimit}
-                </p>
-
-                {/* Buttons */}
-                {(user?.role === "club-admin" || user?.id === event.organizer) ? (
-                  <div className="flex justify-between mt-4">
-                    <button
-                      onClick={() => handleEdit(event)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(event._id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleRegisterClick(event)}
-                    className="bg-green-600 text-white w-full mt-4 py-2 rounded hover:bg-green-700"
-                  >
-                    Register
-                  </button>
-                )}
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          !loading && <p>No upcoming events.</p>
+        {/* Club Admin: Create Event Button */}
+        {user?.role === "club-admin" && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center mb-12"
+          >
+            <button
+              onClick={() => navigate("/create-event")}
+              className="bg-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold
+                shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200
+                flex items-center gap-3"
+            >
+              <CalendarDays size={24} />
+              Create New Event
+            </button>
+          </motion.div>
         )}
-      </div>
 
-      {/* Edit Form Modal */}
-      {editingEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative w-full max-w-lg">
-            <button onClick={() => setEditingEvent(null)} className="absolute top-2 right-3 text-xl">✖</button>
-            <EditEventForm event={editingEvent} onUpdateSuccess={() => window.location.reload()} />
-          </div>
-        </div>
-      )}
-
-      {/* Registration Modal */}
-      {registerEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-            <button onClick={() => setRegisterEvent(null)} className="absolute top-2 right-3 text-xl">✖</button>
-            <h2 className="text-xl font-bold mb-4">Register for {registerEvent.title}</h2>
-            <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              <input type="text" name="name" value={formData.name} disabled className="w-full border rounded px-3 py-2 bg-gray-100" />
-              <input type="email" name="email" value={formData.email} disabled className="w-full border rounded px-3 py-2 bg-gray-100" />
-              <select
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                required
-                className="w-full border rounded px-3 py-2"
+        {/* Event List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          <AnimatePresence>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full bg-red-50 rounded-xl p-6 text-center text-red-600"
               >
-                <option value="">Select Department</option>
-                {departments.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                name="division"
-                value={formData.division}
-                onChange={handleChange}
-                placeholder="Division"
-                required
-                className="w-full border rounded px-3 py-2"
-              />
-              <input
-                type="text"
-                name="rollNumber"
-                value={formData.rollNumber}
-                onChange={handleChange}
-                placeholder="Roll Number"
-                required
-                className="w-full border rounded px-3 py-2"
-              />
-              <button type="submit" className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">
-                Submit Registration
-              </button>
-            </form>
-          </div>
+                {error}
+              </motion.div>
+            )}
+
+            {events.length > 0 ? (
+              events.map((event) => (
+                <motion.div
+                  key={event._id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Card className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-200">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-64 object-cover"
+                      onError={(e) => {
+                        e.target.src = "/assets/placeholder.png";
+                      }}
+                    />
+                    <CardContent className="p-6">
+                      <h2 className="text-2xl font-bold text-purple-800 mb-4 text-center">
+                        {event.title}
+                      </h2>
+                      
+                      <div className="space-y-3 mb-6">
+                        <p className="flex items-center gap-3 text-gray-700">
+                          <MapPin className="text-purple-500" size={20} />
+                          {event.location}
+                        </p>
+                        <p className="flex items-center gap-3 text-gray-700">
+                          <Clock className="text-purple-500" size={20} />
+                          {new Date(event.date).toDateString()} at {event.time}
+                        </p>
+                        <p className="flex items-center gap-3 text-gray-700">
+                          <FileText className="text-purple-500" size={20} />
+                          {event.description}
+                        </p>
+                        <p className="flex items-center gap-3 text-gray-700">
+                          <UsersIcon className="text-purple-500" size={20} />
+                          Limit: {event.registrationLimit} participants
+                        </p>
+                      </div>
+
+                      {/* Action Buttons */}
+                      {(user?.role === "club-admin" || user?.id === event.organizer) ? (
+                        <div className="flex gap-4 mt-6">
+                          <button
+                            onClick={() => handleEdit(event)}
+                            className="flex-1 bg-purple-600 text-white py-3 px-6 rounded-lg
+                              hover:bg-purple-700 transition-colors duration-200"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(event._id)}
+                            className="flex-1 bg-red-500 text-white py-3 px-6 rounded-lg
+                              hover:bg-red-600 transition-colors duration-200"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleRegisterClick(event)}
+                          className="w-full bg-purple-600 text-white py-3 rounded-lg text-lg font-semibold
+                            hover:bg-purple-700 transform hover:scale-105 transition-all duration-200"
+                        >
+                          Register Now
+                        </button>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full bg-white rounded-xl shadow-lg p-16 text-center"
+              >
+                <CalendarDays size={72} className="text-purple-400 mx-auto mb-6" />
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  No upcoming events
+                </h3>
+                <p className="text-gray-600 text-lg">
+                  Check back later for new events!
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      )}
+
+        {/* Edit Form Modal */}
+        <AnimatePresence>
+          {editingEvent && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-white rounded-xl shadow-xl p-8 relative w-full max-w-lg m-4"
+              >
+                <button
+                  onClick={() => setEditingEvent(null)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+                <EditEventForm event={editingEvent} onUpdateSuccess={() => window.location.reload()} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Registration Modal */}
+        <AnimatePresence>
+          {registerEvent && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-white rounded-xl shadow-xl p-8 relative w-full max-w-md m-4"
+              >
+                <button
+                  onClick={() => setRegisterEvent(null)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+                <h2 className="text-2xl font-bold text-purple-800 mb-6">
+                  Register for {registerEvent.title}
+                </h2>
+                <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    disabled
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    disabled
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3"
+                  />
+                  <select
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3"
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    name="division"
+                    value={formData.division}
+                    onChange={handleChange}
+                    placeholder="Division"
+                    required
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3"
+                  />
+                  <input
+                    type="text"
+                    name="rollNumber"
+                    value={formData.rollNumber}
+                    onChange={handleChange}
+                    placeholder="Roll Number"
+                    required
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-purple-600 text-white py-3 rounded-lg text-lg font-semibold
+                      hover:bg-purple-700 transform hover:scale-105 transition-all duration-200"
+                  >
+                    Submit Registration
+                  </button>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

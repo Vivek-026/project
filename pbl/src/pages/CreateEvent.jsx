@@ -68,91 +68,163 @@ const CreateEvent = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg"
-    >
-      <h2 className="text-2xl font-bold mb-4 text-center">Create a New Event</h2>
+    <div className="min-h-screen bg-gray-50 md:ml-72 py-8">
+      <div className="max-w-3xl mx-auto px-4">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-8">
+            <h2 className="text-3xl font-bold text-white text-center">Create New Event</h2>
+          </div>
 
-      {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {error && (
+              <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
 
-      <input
-        type="text"
-        name="title"
-        value={form.title}
-        onChange={handleChange}
-        placeholder="Event Title"
-        required
-        className="block w-full p-2 mb-3 border rounded-md"
-      />
-      <textarea
-        name="description"
-        value={form.description}
-        onChange={handleChange}
-        placeholder="Event Description"
-        required
-        className="block w-full p-2 mb-3 border rounded-md"
-      />
-      <input
-        type="date"
-        name="date"
-        value={form.date}
-        onChange={handleChange}
-        required
-        className="block w-full p-2 mb-3 border rounded-md"
-      />
-      <input
-        type="time"
-        name="time"
-        value={form.time}
-        onChange={handleChange}
-        required
-        className="block w-full p-2 mb-3 border rounded-md"
-      />
-      <input
-        type="text"
-        name="location"
-        value={form.location}
-        onChange={handleChange}
-        placeholder="Location"
-        required
-        className="block w-full p-2 mb-3 border rounded-md"
-      />
-      <input
-        type="number"
-        name="registrationLimit"
-        value={form.registrationLimit}
-        onChange={handleChange}
-        placeholder="Registration Limit"
-        required
-        className="block w-full p-2 mb-3 border rounded-md"
-      />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Event Title
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  value={form.title}
+                  onChange={handleChange}
+                  placeholder="Enter event title"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                    focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                    transition-all duration-200 outline-none"
+                  required
+                />
+              </div>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        className="border rounded-md p-2 w-full mb-3"
-      />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  value={form.location}
+                  onChange={handleChange}
+                  placeholder="Enter event location"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                    focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                    transition-all duration-200 outline-none"
+                  required
+                />
+              </div>
 
-      {preview && (
-        <img
-          src={preview}
-          alt="Event Preview"
-          className="w-full h-40 object-cover rounded-lg mb-3 border"
-        />
-      )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                    focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                    transition-all duration-200 outline-none"
+                  required
+                />
+              </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className={`w-full px-4 py-2 text-white rounded-lg ${
-          loading ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"
-        }`}
-      >
-        {loading ? "Creating Event..." : "Create Event"}
-      </button>
-    </form>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Time
+                </label>
+                <input
+                  type="time"
+                  name="time"
+                  value={form.time}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                    focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                    transition-all duration-200 outline-none"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Describe your event..."
+                rows="4"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                  focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                  transition-all duration-200 outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Registration Limit
+              </label>
+              <input
+                type="number"
+                name="registrationLimit"
+                value={form.registrationLimit}
+                onChange={handleChange}
+                placeholder="Maximum number of participants"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 
+                  focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                  transition-all duration-200 outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Event Banner
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200
+                  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                  file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700
+                  hover:file:bg-purple-100 transition-all duration-200"
+              />
+            </div>
+
+            {preview && (
+              <div className="rounded-xl overflow-hidden shadow-lg">
+                <img
+                  src={preview}
+                  alt="Event banner preview"
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full px-6 py-4 rounded-xl text-white font-semibold text-lg
+                transition-all duration-300 transform hover:scale-[1.02]
+                ${loading 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
+                }`}
+            >
+              {loading ? 'Creating Event...' : 'Create Event'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

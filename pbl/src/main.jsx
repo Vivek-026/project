@@ -23,6 +23,7 @@ import EditPost from "./components/EditPost";
 import Events from "./pages/Events.jsx"; 
 import MyEvents from "./pages/MyEvents.jsx"; 
 import EventRegistrations from "./pages/EventRegistrations"; 
+import About from "./components/About.jsx";
 
 
 const router = createBrowserRouter([
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: "stuprofile", element: <StuProfile /> },
       { path: "clubs", element: <Clubs /> },
       { path: "calender", element: <Calender /> },
+      { path: "about", element: <About /> },
       { path: "/edit/:id" ,element:<EditPost />} ,
       { path: "events", element: <Events /> }, 
       { path: "myevents", element: <MyEvents /> }, 
