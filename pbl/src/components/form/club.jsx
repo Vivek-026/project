@@ -39,7 +39,7 @@ const ClubRegistrationForm = ({ adminId }) => {
                 },
                 {
                     headers: {
-                        'Authorization': token
+                        'Authorization': `Bearer ${token}`
                     }
                 }
             );
@@ -49,7 +49,7 @@ const ClubRegistrationForm = ({ adminId }) => {
             localStorage.setItem("description", clubData.description);
             
             // Navigate to home after successful club creation
-            setTimeout(() => navigate("/"), 1500);
+            setTimeout(() => navigate("/login"), 1500);
         } catch (error) {
             console.error("Club creation error:", error);
             if (error.response && error.response.status === 401) {

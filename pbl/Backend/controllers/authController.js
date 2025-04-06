@@ -95,6 +95,7 @@ exports.register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         user = new User({ name, email, password: hashedPassword, role });
+
         await user.save();
 
         const jwt = require("jsonwebtoken");

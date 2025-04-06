@@ -19,8 +19,11 @@ import AdminProfile from "./components/profile/adminProfile.jsx";
 import StuProfile from "./components/profile/stuProfile.jsx";
 import Clubs from "./components/allClubs.jsx";
 import Calender from "./components/calender.jsx";
-import Events from "./pages/Events.jsx"; // ✅ Import Events page
-import MyEvents from "./pages/MyEvents.jsx"; // ✅ Import My Events page
+import EditPost from "./components/EditPost";
+import Events from "./pages/Events.jsx"; 
+import MyEvents from "./pages/MyEvents.jsx"; 
+import EventRegistrations from "./pages/EventRegistrations"; 
+
 
 const router = createBrowserRouter([
   {
@@ -35,9 +38,11 @@ const router = createBrowserRouter([
       { path: "stuprofile", element: <StuProfile /> },
       { path: "clubs", element: <Clubs /> },
       { path: "calender", element: <Calender /> },
-      { path: "events", element: <Events /> }, // ✅ Add Events route
-      { path: "myevents", element: <MyEvents /> }, // ✅ Add My Events route
+      { path: "/edit/:id" ,element:<EditPost />} ,
+      { path: "events", element: <Events /> }, 
+      { path: "myevents", element: <MyEvents /> }, 
       { path: "create-event", element: <CreateEvent /> },
+      { path: "event/:eventId/registrations", element: <EventRegistrations /> },
     ],
   },
 ]);

@@ -45,12 +45,15 @@ function NewPost() {
                 setImage(null);
                 setImagePreview(null);
                 setLikes(0);
+                window.location.reload();
             } else {
                 alert("Failed to upload post: " + data.message);
             }
+            
         } catch (error) {
             console.log("Error in adding post:", error);
         }
+        
     };
 
     return (

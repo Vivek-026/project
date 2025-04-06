@@ -128,20 +128,25 @@ exports.updateEvent = async (req, res) => {
  };
  
  // Delete an event
- exports.deleteEvent = async (req, res) => {
-   try {
-       const event = await Event.findById(req.params.id);
-       if (!event) return res.status(404).json({ message: "Event not found" });
+exports.deleteEvent = async (req, res) => {
+  try {
+    if (req.user.role !== "club-admin") {
+      return res.status(403).json({ message: "Only club-admins can delete events" });
+    }
 
-       if (event.createdBy.toString() !== req.user.id && req.user.role !== "club-admin") {
-           return res.status(403).json({ message: "Not authorized to delete this event" });
-       }
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
-       await event.deleteOne();
-       res.json({ message: "Event deleted successfully!" });
-   } catch (error) {
-       res.status(500).json({ message: "Server error", error });
-   }
+    
+    if (event.organizer.toString() !== req.user.id.toString()) {
+      return res.status(403).json({ message: "You can only delete your own events" });
+    }    
+
+    await event.deleteOne();
+    res.json({ message: "Event deleted successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
 
  
@@ -157,5 +162,71 @@ exports.getMyEvents = async (req, res) => {
     res.json(events);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch your events', error: err.message });
+  }
+};
+
+// Register a user for an event
+// controllers/eventController.js
+exports.registerForEvent = async (req, res) => {
+  try {
+    const { name, email, department, division, rollNumber } = req.body;
+    const eventId = req.params.eventId;
+
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Check for duplicate registration
+    const alreadyRegistered = event.registrations.some((reg) => reg.user && reg.user.toString() === req.user.id.toString());
+
+    if (alreadyRegistered) return res.status(400).json({ message: "You have already registered for this event" });
+
+    event.registrations.push({
+      name,
+      email,
+      department,
+      division,
+      rollNumber,
+      user: req.user.id, // 👈 Important!
+    });
+
+    await event.save();
+    res.status(200).json({ message: "Successfully registered" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Registration failed" });
+  }
+};
+
+
+exports.getEventRegistrations = async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const event = await Event.findById(eventId).populate("registrations.user", "name email department rollNumber division");
+
+
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Only the organizer or club-admin should be able to see registrations
+    if (
+      event.organizer.toString() !== req.user.id.toString() &&
+      req.user.role !== "club-admin"
+    ) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    console.log("Event Registrations:", event.registrations);
+
+    res.status(200).json({
+      registrations: event.registrations .filter(reg => reg.user !== null).map((reg) => ({
+        name: reg.user?.name || reg.name,
+        email: reg.user?.email || reg.email,
+        department: reg.user?.department || reg.department,
+        rollNumber: reg.user?.rollNumber || reg.rollNumber,
+        division: reg.user?.division || reg.division,
+      })),
+    });
+  } catch (err) {
+    console.error("Fetch error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

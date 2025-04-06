@@ -10,6 +10,7 @@ const CreateEvent = () => {
     date: "",
     time: "",
     location: "",
+    registrationLimit: "",
   });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -24,47 +25,53 @@ const CreateEvent = () => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setPreview(URL.createObjectURL(file)); // Show image preview
+      setPreview(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
-   e.preventDefault();
-   setLoading(true);
-   setError("");
- 
-   const token = localStorage.getItem("token");
-   console.log("Token:", token); // Debugging
- 
-   if (!token) {
-     setError("⚠️ Authentication token is missing. Please login again.");
-     setLoading(false);
-     return;
-   }
- 
-   const formData = new FormData();
-   Object.keys(form).forEach((key) => formData.append(key, form[key]));
-   if (image) formData.append("image", image);
- 
-   try {
-     await createEvent(formData, token);  // Ensure token is passed correctly
-     alert("🎉 Event created successfully!");
- 
-     setForm({ title: "", description: "", date: "", time: "", location: "" });
-     setImage(null);
-     setPreview(null);
-   } catch (error) {
-     setError(error.response?.data?.message || "⚠️ Error creating event. Please try again.");
-     console.error("Error:", error);
-   } finally {
-     setLoading(false);
-   }
- };
- 
- 
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("⚠️ Authentication token is missing. Please login again.");
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => formData.append(key, form[key]));
+    if (image) formData.append("image", image);
+
+    try {
+      await createEvent(formData, token);
+      alert("🎉 Event created successfully!");
+
+      setForm({
+        title: "",
+        description: "",
+        date: "",
+        time: "",
+        location: "",
+        registrationLimit: "",
+      });
+      setImage(null);
+      setPreview(null);
+    } catch (error) {
+      setError(error.response?.data?.message || "⚠️ Error creating event. Please try again.");
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg">
+    <form
+      onSubmit={handleSubmit}
+      className="p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg"
+    >
       <h2 className="text-2xl font-bold mb-4 text-center">Create a New Event</h2>
 
       {error && <p className="text-red-500 text-center mb-2">{error}</p>}
@@ -111,8 +118,16 @@ const CreateEvent = () => {
         required
         className="block w-full p-2 mb-3 border rounded-md"
       />
+      <input
+        type="number"
+        name="registrationLimit"
+        value={form.registrationLimit}
+        onChange={handleChange}
+        placeholder="Registration Limit"
+        required
+        className="block w-full p-2 mb-3 border rounded-md"
+      />
 
-      {/* Image Upload */}
       <input
         type="file"
         accept="image/*"
@@ -120,7 +135,6 @@ const CreateEvent = () => {
         className="border rounded-md p-2 w-full mb-3"
       />
 
-      {/* Image Preview */}
       {preview && (
         <img
           src={preview}
