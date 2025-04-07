@@ -23,7 +23,8 @@ exports.createEvent = async (req, res) => {
      const { title, description, date, time, location, registrationLimit } = req.body;
  
      // Fetch the club ID from the logged-in user
-     const clubId = req.user.club;
+     const clubId = req.user._id;
+     console.log("User Data:", req.user);
      if (!clubId) {
        return res.status(400).json({ message: "Club ID not found for this user" });
      }

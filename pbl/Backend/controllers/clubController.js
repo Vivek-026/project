@@ -41,3 +41,20 @@ exports.getAllClubs = async (req, res) => {
     }
 };
 
+// GET /club/:id/followers-count
+
+exports.getFollowersCount = async (req, res) => {
+    try {
+      const club = await Club.findById(req.params.id);
+      if (!club) {
+        return res.status(404).json({ message: "Club not found" });
+      }
+  
+      const followersCount = club.members.length;
+      res.status(200).json({ followersCount });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching followers count", error });
+    }
+  };
+  
+

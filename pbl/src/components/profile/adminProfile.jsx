@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import LogoutButton from "../button/logoutButton";
 import AdminCard from "../../adminCard";
 import { useSelector, useDispatch } from "react-redux";
@@ -6,12 +6,36 @@ import { Link } from "react-router-dom";
 import { setCards } from "../../store/cardSlice";
 import { getCards } from "../../auth/fetchCards";
 
-function AdminProfile({ followers = 245 }) {
+function AdminProfile() {
   const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
   const name = localStorage.getItem("club");
   const admin = localStorage.getItem("name");
   const clubBio = localStorage.getItem("description");
+  const [followersCount, setFollowersCount] = useState(0);
+
+  useEffect(() => {
+    const fetchFollowersCount = async () => {
+      try {
+        const clubId = localStorage.getItem("clubId");
+        console.log("clubId:" ,clubId);
+
+        const res = await fetch(`http://localhost:5000/api/clubs/${clubId}/followers-count`);
+        const data = await res.json();
+        setFollowersCount(data.followersCount);
+        console.log(data);
+        console.log(data.followersCount);
+        console.log(followersCount);
+      } catch (err) {
+        console.error("Failed to fetch followers count", err);
+      }
+    };
+
+    const clubId = localStorage.getItem("clubId");
+    if (clubId) {
+      fetchFollowersCount();
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -45,7 +69,7 @@ function AdminProfile({ followers = 245 }) {
     <div className="min-h-screen bg-gray-50 md:ml-64">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* Header Section with Gradient */}
+          {/* Header Section */}
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 sm:px-8 py-8">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl sm:text-3xl font-bold text-white">Club Dashboard</h2>
@@ -56,24 +80,22 @@ function AdminProfile({ followers = 245 }) {
           {/* Profile Section */}
           <div className="px-6 sm:px-8 py-8">
             <div className="flex flex-col lg:flex-row items-center gap-8 mb-8">
-              {/* Club Avatar */}
               <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-100 to-indigo-50 border-4 border-white shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
                 <span className="text-3xl sm:text-4xl font-bold text-purple-600">{name?.charAt(0)}</span>
               </div>
 
-              {/* Club Info */}
               <div className="flex-1 text-center lg:text-left space-y-4">
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">{name}</h1>
                 <p className="text-gray-600 text-lg max-w-2xl">{clubBio}</p>
                 <p className="text-purple-600 font-semibold text-lg">Managed by: {admin}</p>
-                
-                {/* Stats and Actions */}
+
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 mt-6">
                   <div className="text-center bg-purple-50 px-6 py-3 rounded-xl">
-                    <span className="block text-3xl font-bold text-purple-600">{followers}</span>
+                  <span className="block text-3xl font-bold text-purple-600">{followersCount}</span>
+
                     <span className="text-sm text-gray-600">Followers</span>
                   </div>
-                  
+
                   <div className="flex gap-4 flex-wrap">
                     <Link to="/newPost">
                       <button className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition duration-300 transform hover:scale-105 shadow-md hover:shadow-xl">
@@ -95,7 +117,7 @@ function AdminProfile({ followers = 245 }) {
               <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">
                 Recent Posts & Events
               </h2>
-              
+
               {filteredCards.length === 0 ? (
                 <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                   <p className="text-gray-500 text-xl mb-4">

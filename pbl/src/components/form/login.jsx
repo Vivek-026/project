@@ -32,6 +32,13 @@ const Login = () => {
         localStorage.setItem("email", email);
         localStorage.setItem("role", user.user.role);
         localStorage.setItem("authStatus", "true");
+        
+        if (user.user.role === "club-admin" && user.club) {
+          localStorage.setItem("club", user.club.name);
+          localStorage.setItem("description", user.club.description);
+          localStorage.setItem("clubId", user.club._id); // <-- ✅ ADD THIS LINE
+        }
+        
 
         if (user.token) {
           localStorage.setItem("token", user.token);
