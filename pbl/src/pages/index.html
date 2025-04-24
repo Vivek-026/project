@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Our Team</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-white bg-gradient-to-b from-black to-blue-800 min-h-screen flex flex-col">
+      <!-- ✅ Navbar -->
+      <header class="bg-black/50 border-b border-gray-500">
+        <div class="container mx-auto px-6 py-6 flex justify-between items-center">
+            <h1 class="text-2xl sm:text-2xl font-bold">ClubConnect</h1>
+            <button class="sm:hidden text-gray-300 focus:outline-none" onclick="toggleNavbar()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+            <nav id="nav-menu" class="hidden sm:flex flex-col sm:flex-row bg-black w-full sm:w-auto absolute sm:static top-16 left-0 sm:top-auto sm:left-auto py-6 sm:py-0 px-6 sm:px-0 z-10 space-y-6 sm:space-y-0 sm:space-x-8">
+                <a href="home.html" class="block text-xl sm:text-lg text-gray-300 hover:text-white">Home</a>
+                <a href="visualise.html" class="block text-xl sm:text-lg text-gray-300 hover:text-white">Visualise</a>
+                <a href="#faq" class="block text-xl sm:text-lg text-gray-300 hover:text-white">FAQ's</a>
+                <a href="#about" class="block text-xl sm:text-lg text-gray-300 hover:text-white">About Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="project-conclusion">
+            <h2>Project Conclusion</h2>
+            <p>
+                Our team has successfully completed this innovative project, combining cutting-edge frontend technologies with robust backend solutions and advanced data analysis. Through our collaborative efforts, we've created a product that not only meets but exceeds our initial goals. The synergy between our frontend, backend, and data science expertise has resulted in a seamless, efficient, and user-friendly application that we're proud to present.
+            </p>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-member">
+                <img src="Andrew-Garfield-is-the-best-spiderman.webp" alt="Kaustubh ">
+                <h2 class="member-name" data-text="Kaustubh">Kaustubh</h2>
+                <p class="member-role">Backend Developer</p>
+                <div class="member-details">
+                    <h3>Skills:</h3>
+                    <ul>
+                        <li>Node.js</li>
+                        <li>Express</li>
+                        <li>MongoDB</li>
+                       
+                    </ul>
+                    <h3>Contribution:</h3>
+                    <p>Built RESTful API and implemented database schema</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <img src="medium-doctor-strange-2016-movie-4k-5k-on-fine-art-paper-hd-original-imah3a9fz8ggg58h.webp" alt="Vivek">
+                <h2 class="member-name" data-text="Vivek">Vivek</h2>
+                <p class="member-role">Backend Developer</p>
+                <div class="member-details">
+                    <h3>Skills:</h3>
+                    <ul> <li>React</li>
+                        <li>TypeScript</li>
+                        <li>Tailwind CSS</li>
+                        
+                    </ul>
+                    <h3>Contribution:</h3>
+                    <p>Built RESTful API and implemented database schema</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <img src="small-poster-armor-iron-man-robots-the-avengers-movie-tony-stark-original-imaghusjfagmk9py.webp" alt="Siddh">
+                <h2 class="member-name" data-text="Siddhi">Siddhi</h2>
+                <p class="member-role">Ui/Ux Developer</p>
+                <div class="member-details">
+                    <h3>Skills:</h3>
+                    <ul>
+                        <li>Figma</li>
+                        <li>MongoDB</li>
+                    </ul>
+                    <h3>Contribution:</h3>
+                    <p>Made Beautiful Design for Website</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <img src="chris-evans-captain-america.webp" alt="Disha">
+                <h2 class="member-name" data-text="Disha">Disha</h2>
+                <p class="member-role">Ui/Ux Developer</p>
+                <div class="member-details">
+                    <h3>Skills:</h3>
+                    <ul>
+                        <li>Figma</li>
+                        <li>MongoDB</li>
+                    </ul>
+                    <h3>Contribution:</h3>
+                    <p>Made Beautiful Design for Website</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-blue-900 text-center py-6 text-sm sm:text-base">
+        <p>&copy; 2025 ClubConnect Website. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
+

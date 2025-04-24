@@ -9,6 +9,7 @@ import Crad from './components/cards'
 import Home from './components/home'
 import NewPost from './components/form/newPost'
 
+
 function App() {
   const [count, setCount] = useState(0)
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const { followClub, unfollowClub,getFollowedClubs } = require('../controllers/followController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { protect, authorize } = require('../middleware/authMiddleware');
+
 
 const router = express.Router();
 
